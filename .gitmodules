@@ -4,3 +4,9 @@
 [submodule "lib/glm"]
 	path = lib/glm
 	url = https://github.com/g-truc/glm.git
+[submodule "externals/civetweb"]
+	path = externals/civetweb
+	url = https://github.com/civetweb/civetweb
+[submodule "externals/udhcp"]
+	path = externals/udhcp
+	url = https://github.com/iplinux/udhcp
