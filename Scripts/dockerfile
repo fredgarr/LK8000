@@ -15,10 +15,10 @@ RUN apt-get update && \
         rm -rf /tmp/* /var/tmp/* /var/lib/apt/lists/* /var/log/*
 
 # Install PC library dependencies
-WORKDIR /tmp/mingw
-ADD install-mingw-w64-depends.sh /tmp/mingw/install-mingw-w64-depends.sh
-RUN ./install-mingw-w64-depends.sh && \
-         rm -rf /tmp/mingw
+# WORKDIR /tmp/mingw
+# ADD install-mingw-w64-depends.sh /tmp/mingw/install-mingw-w64-depends.sh
+# RUN ./install-mingw-w64-depends.sh && \
+        #  rm -rf /tmp/mingw
 
 # Install KOBO toolchain
 WORKDIR /tmp/kobo
@@ -29,6 +29,13 @@ RUN wget http://lk8000.it/toolchain/arm-kobo-linux-gnueabihf-8.3.buster.x86_64.t
 
 ENV PATH=$PATH:/opt/arm-kobo-linux-gnueabihf/bin
 
+WORKDIR /tmp/externals/
+COPY ./externals /tmp/externals
+ENV CC=arm-kobo-linux-gnueabihf-gcc
+ENV CROSS_COMPILE=arm-kobo-linux-gnueabihf-
+RUN cd LK8000WebSrv; make
+RUN cd udhcp; make
+
 #build KOBO library dependencies
 COPY ./kobo-build-rootfs /tmp/kobo-build-rootfs
 WORKDIR /tmp/kobo-build-rootfs
@@ -36,14 +43,18 @@ RUN ./build-all.sh && \
         rm -rf /tmp/kobo-build-rootfs
 ENV KOBO=/opt/kobo-rootfs
 
-# Install WinCE toolchain
-WORKDIR /tmp/WinCE
-RUN wget http://lk8000.it/toolchain/arm-mingw32ce-9.3.0.buster.x86_64.tar.xz && \
-        tar -xJf arm-mingw32ce-9.3.0.buster.x86_64.tar.xz && \
-        mv arm-mingw32ce /opt/arm-mingw32ce && \
-        rm -rf /tmp/WinCE
 
-ENV PATH=$PATH:/opt/arm-mingw32ce/bin
+
+
+
+# Install WinCE toolchain
+# WORKDIR /tmp/WinCE
+# RUN wget http://lk8000.it/toolchain/arm-mingw32ce-9.3.0.buster.x86_64.tar.xz && \
+        # tar -xJf arm-mingw32ce-9.3.0.buster.x86_64.tar.xz && \
+        # mv arm-mingw32ce /opt/arm-mingw32ce && \
+        # rm -rf /tmp/WinCE
+# 
+# ENV PATH=$PATH:/opt/arm-mingw32ce/bin
 
 # add compiler user
 RUN adduser --disabled-password --gecos '' compiler
